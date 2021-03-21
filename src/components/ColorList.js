@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EditMenu from "./EditMenu.js";
+import { axiosWithAuth } from "../helpers/axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -11,16 +12,41 @@ const ColorList = ({ colors, updateColors }) => {
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
   const editColor = color => {
+    console.log(color);
     setEditing(true);
     setColorToEdit(color);
   };
 
   const saveEdit = e => {
     e.preventDefault();
-
+    axiosWithAuth().put(`/colors/${colorToEdit.id}`, colorToEdit)
+      .then((res) => {
+        console.log(res.data);
+        //Creates a shallow copy of the colors array
+        let newColors = [...colors];
+        let colorIndex = newColors.findIndex((color) => color.id === res.data.id);
+        let newColor = { ...newColors[colorIndex] };
+        newColor.color = res.data.color;
+        newColor.code.hex = res.data.code.hex;
+        newColors[colorIndex] = newColor;
+        updateColors(newColors);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    setEditing(false);
   };
 
   const deleteColor = color => {
+    axiosWithAuth().delete(`/colors/${color.id}`)
+      .then((res) => {
+        console.log(res.data);
+        const newColors = colors.filter((color) => parseInt(color.id) !== parseInt(res.data));
+        updateColors(newColors);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   };
 
   return (
