@@ -7,10 +7,16 @@ import ColorList from "./ColorList";
 const BubblePage = () => {
   const [colorList, setColorList] = useState([]);
 
+  if (colorList.length === 0) {
+    return <h1>Hello from BubblePage!</h1>
+  }
+
   return (
     <>
+      {/*
       <ColorList colors={colorList} updateColors={setColorList} />
       <Bubbles colors={colorList} />
+      */}
     </>
   );
 };

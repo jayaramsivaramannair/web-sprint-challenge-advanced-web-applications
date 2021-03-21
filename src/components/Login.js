@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from 'react-router-dom';
 import axios from "axios";
 
 const Login = () => {
@@ -10,6 +11,7 @@ const Login = () => {
   })
 
   const [logging, setLogging] = useState(false);
+  const history = useHistory();
 
   const formChange = (evt) => {
     console.log(evt.target.name, evt.target.value);
@@ -23,11 +25,13 @@ const Login = () => {
       .then((res) => {
         console.log(res.data);
         localStorage.setItem('authToken', res.data.payload);
-        //history.pushState('/BubblePage')
+        history.push('/BubblePage')
       })
       .catch((err) => {
         console.log(err);
       })
+    setForm({ ...form, username: '', password: '' });
+    setLogging(false);
   }
 
 
