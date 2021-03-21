@@ -1,23 +1,41 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useHistory } from 'react-router-dom';
+import { axiosWithAuth } from "../helpers/axiosWithAuth";
 
 import Bubbles from "./Bubbles";
 import ColorList from "./ColorList";
 
 const BubblePage = () => {
   const [colorList, setColorList] = useState([]);
+  const history = useHistory();
+
+  useEffect(() => {
+    axiosWithAuth().get('/colors')
+      .then((res) => {
+        console.log(res.data);
+        setColorList(res.data);
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [setColorList])
 
   if (colorList.length === 0) {
-    return <h1>Hello from BubblePage!</h1>
+    return <div>Fetching Colors.....</div>
+  }
+
+  const logout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('authToken');
+    history.push('/');
   }
 
   return (
-    <>
-      {/*
+    <div>
+      <button onClick={logout}>Logout</button>
       <ColorList colors={colorList} updateColors={setColorList} />
       <Bubbles colors={colorList} />
-      */}
-    </>
+    </div>
   );
 };
 
