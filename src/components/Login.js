@@ -11,6 +11,7 @@ const Login = () => {
   })
 
   const [logging, setLogging] = useState(false);
+  const [errors, setErrors] = useState('');
   const history = useHistory();
 
   const formChange = (evt) => {
@@ -20,15 +21,17 @@ const Login = () => {
 
   const formSubmit = (evt) => {
     evt.preventDefault();
+    setErrors('');
     setLogging(true);
     axios.post('http://localhost:5000/api/login', form)
       .then((res) => {
         console.log(res.data);
         localStorage.setItem('authToken', res.data.payload);
-        history.push('/BubblePage')
+        history.push('/bubbles')
       })
       .catch((err) => {
         console.log(err);
+        setErrors(err.message);
       })
     setForm({ ...form, username: '', password: '' });
     setLogging(false);
@@ -69,6 +72,7 @@ const Login = () => {
           />
         </label>
         <button>Login</button>
+        {(errors) ? <p style={{ color: 'tomato' }}>Username or Password not valid</p> : ''}
       </form>
     </>
   );
